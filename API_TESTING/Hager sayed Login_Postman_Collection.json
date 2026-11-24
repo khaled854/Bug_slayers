@@ -1,0 +1,112 @@
+{
+  "info": {
+    "name": "Part 3 - Login API Tests",
+    "description": "Automation Exercise API 7 and API 8. Set collection variables email and password to an existing registered account before running API 7.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://automationexercise.com"
+    },
+    {
+      "key": "email",
+      "value": "REPLACE_WITH_REGISTERED_EMAIL"
+    },
+    {
+      "key": "password",
+      "value": "REPLACE_WITH_ACCOUNT_PASSWORD"
+    }
+  ],
+  "item": [
+    {
+      "name": "API 7 - Verify Login with valid details",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "email",
+              "value": "{{email}}",
+              "type": "text"
+            },
+            {
+              "key": "password",
+              "value": "{{password}}",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/verifyLogin",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "verifyLogin"
+          ]
+        },
+        "description": "Positive test: both email and password must belong to an existing registered account."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Response is JSON', function () { pm.response.to.be.json; });",
+              "const body = pm.response.json();",
+              "pm.test('API responseCode is 200', function () { pm.expect(body.responseCode).to.eql(200); });",
+              "pm.test('Message confirms user exists', function () { pm.expect(body.message).to.eql('User exists!'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "API 8 - Verify Login without email parameter",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "password",
+              "value": "{{password}}",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/verifyLogin",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "verifyLogin"
+          ]
+        },
+        "description": "Negative test: email is intentionally omitted from the request."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Response is JSON', function () { pm.response.to.be.json; });",
+              "const body = pm.response.json();",
+              "pm.test('API responseCode is 400', function () { pm.expect(body.responseCode).to.eql(400); });",
+              "pm.test('Message indicates a missing email or password parameter', function () { pm.expect(body.message).to.eql('Bad request, email or password parameter is missing in POST request.'); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
